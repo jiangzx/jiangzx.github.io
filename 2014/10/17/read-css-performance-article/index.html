@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>书写高效的CSS选择器 - 午夜圣斗士</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="高性能CSS并不是一个新话题，也没有花太多时间研究，但自从入职SKY[作者的工作单位] 以来，我就更加关注CSS设计方便的性能问题。有很多人根本没有意识到CSS选择器的设计即有高效的一面同时也有低效的一面。当你意识到你在css选择器设计过程中，一些细微修改后能够使性能降低，那么以后也就很容易避免这些性能问题了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="书写高效的CSS选择器">
+<meta property="og:url" content="http://jiangzx.github.io/2014/10/17/read-css-performance-article/index.html">
+<meta property="og:site_name" content="午夜圣斗士">
+<meta property="og:description" content="高性能CSS并不是一个新话题，也没有花太多时间研究，但自从入职SKY[作者的工作单位] 以来，我就更加关注CSS设计方便的性能问题。有很多人根本没有意识到CSS选择器的设计即有高效的一面同时也有低效的一面。当你意识到你在css选择器设计过程中，一些细微修改后能够使性能降低，那么以后也就很容易避免这些性能问题了。">
+<meta property="og:updated_time" content="2015-12-27T16:16:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="书写高效的CSS选择器">
+<meta name="twitter:description" content="高性能CSS并不是一个新话题，也没有花太多时间研究，但自从入职SKY[作者的工作单位] 以来，我就更加关注CSS设计方便的性能问题。有很多人根本没有意识到CSS选择器的设计即有高效的一面同时也有低效的一面。当你意识到你在css选择器设计过程中，一些细微修改后能够使性能降低，那么以后也就很容易避免这些性能问题了。">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo logo-text" href="/">午夜圣斗士</a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">文档</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://jiangzx.github.io"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+    <section id="main" class="outer"><article id="post-read-css-performance-article" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      书写高效的CSS选择器
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2014/10/17/read-css-performance-article/" class="article-date">
+  <time datetime="2014-10-17T03:33:42.000Z" itemprop="datePublished">2014-10-17</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/译文/">译文</a>
+  </div>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>高性能CSS并不是一个新话题，也没有花太多时间研究，但自从入职<em>SKY</em>[<code>作者的工作单位</code>] 以来，我就更加关注CSS设计方便的性能问题。有很多人根本没有意识到CSS选择器的设计即有高效的一面同时也有低效的一面。当你意识到你在css选择器设计过程中，一些细微修改后能够使性能降低，那么以后也就很容易避免这些性能问题了。<br><a id="more"></a></p>
+<p>这些规范和细节仅仅针对那些性能要求比较高的，需要渲染成千上万<code>DOM</code>节点的网站，话说回来亲自动手测试一下，不论你搭一个 <a href="http://fackbook.com/" target="_blank" rel="external">facebook</a> 或者仅仅就是本地的一个页面，仔细测试下都比较容易看出css选择器的设计对页面性能的影响。</p>
+<h2 id="CSS_u9009_u62E9_u5668"><a href="#CSS_u9009_u62E9_u5668" class="headerlink" title="CSS选择器"></a>CSS选择器</h2><p>css选择器我们都不陌生，一些基本的分别是标签选择器 (如 <code>div</code>)、id选择器 (如 <code>#header</code>) 、类选择器 (如 <code>.tweet</code>)。不常用的是伪类选择器(如 <code>:hover</code>)、复杂一点的包括<code>css3</code>及正则表达式(如，<code>:first-child</code> or <code>[class^=&quot;grid-&quot;]</code>).</p>
+<p>选择器的内部有一个性能排序，从高到低的性能排序如下</p>
+<pre><code>1. ID, 如 #header
+2. 类, 如 .promo
+3. 标签, 如 div
+4. 相邻, 如 h2 + p
+5. 子元素, 如 li &gt; ul
+6. 后代, 如 ul a
+7. 通配符, 如 *
+8. 属性, 如 [type=&quot;text&quot;]
+9. 伪类, 如 a:hover
+</code></pre><p>理论上尽管id选择器比其他选择器更快一点，但仅此而已，使用 <a href="http://stevesouders.com/" target="_blank" rel="external">Steve Souders</a> 的测试工具测试后不难发现类选择器的回流时间和ID   选择器是比较接近的。</p>
+<p>甚至在 <strong>windows</strong> 的 <strong>Firefox 6</strong> 浏览器测试后发现一个简单的类选择器回流时间为<em>10.9</em>，而ID选择器平均为<em>12.5</em>                        ，足以说明id选择器有时比类选择器还要慢。</p>
+<p>id选择器和类选择器的速度差异有时几乎没有什么可比性，测试一个标签选择器<code>&lt;a&gt;</code>要比id选择器和类选择器消耗更多的时间，测试一个使用过多限定符的后代选择器，回流时间竟可以在<em>440</em>左右。</p>
+<p>由此可以看出[<code>id选择器</code>][<code>类选择器</code>]和[<code>标签选择器</code>][<code>后代选择器</code>]的区别还是很大的，但是他们自身的差异却很小。注意，这些数据受机器和浏览器环境影响较大，建议你自己亲自跑一下数据。</p>
+<h2 id="u7EC4_u5408_u9009_u62E9_u5668_u8BBE_u8BA1"><a href="#u7EC4_u5408_u9009_u62E9_u5668_u8BBE_u8BA1" class="headerlink" title="组合选择器设计"></a>组合选择器设计</h2><p>你可以单独的使用id选择器如<code>#nav</code>,它会选取任何id为<code>nav</code>的元素，或者你可以使用组合选择器如<code>#nav a</code>,它会匹配那些在id为<code>nav</code>内的元素。</p>
+<p>我们从左向右的顺序读，会认为 <code>#nav</code>包含了一个<code>a</code>，但是浏览器不同，浏览器会从右向左读。它会认为是<code>a</code>包裹在<code>#nav</code>里，这一点点细微的读取差别就会出现一个很大的性能问题，并且是值得我们去学些的。如果想知道更深奥的原理，请参考<a href="http://stackoverflow.com/questions/5797014/why-do-browsers-match-css-selectors-from-right-to-left" target="_blank" rel="external">这篇讨论</a>，对浏览器而已从最右边的元素(<strong>也就是我们要选择的元素</strong>)自下往上遍历dom树要比自上向下遍历效率快(<strong>甚至可能无法定位到所选元素</strong>) – 下面会提到为什么这么做。</p>
+<h2 id="u5173_u952E_u5B57_u9009_u62E9_u5668_u8BBE_u8BA1"><a href="#u5173_u952E_u5B57_u9009_u62E9_u5668_u8BBE_u8BA1" class="headerlink" title="关键字选择器设计"></a>关键字选择器设计</h2><p>关键字选择器也就是我们最右边我们想要的那个元素，这是浏览器最初查找的元素。<br>回想一下我们刚提到的哪种选择器最高效？其实，无论哪一个是作为关键字都会影响选择器的性能；当设计高性能的css样式时，正是由关键字决定了准确、关键的性能因素。<br>关键字选择表示如下：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#content .intro&#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>把尽可能大的提升性能的指标用类表示是一种固有的性能选择器方案。浏览器将首先查找所有<code>.intro</code>的实例（页面可能没有太多的<code>.intro</code>），然后再去匹配那些id为<code>content</code>并且在包裹在其内部的<code>.intro</code>类元素。相反，下面的选择器书写方式其实很不高效：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#content * &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>它所做的就是查找出每一个页面上的元素，然后再去判断它是否在父元素<code>#content</code>内，这是非常耗性能的一种设计模式。通过这些知识点，我们针对类和元素的选取就更容易下结论了。<br>让我们设想一下，比方你有一个非常非常大的页面，页面中包含成千上万个<code>&lt;a&gt;</code>标签，同时有一些媒体网站链接的<code>&lt;a&gt;</code>标签位于<code>id</code>为<code>#social</code>的<code>&lt;ul&gt;</code>里面，比方说就是<code>Twitter</code>，<code>Facebook</code>，<code>Dribbble</code>和<code>Google+</code>这四个网站链接吧，它们周围还有成千上万个<code>&lt;a&gt;</code>节点都在页面内。因此以下的写法是非常不合理而且低效的：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#social a &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这么做的话，浏览器会访问成千上万个<code>&lt;a&gt;</code>标签，因此我们的关键字选择器匹配了一大堆我们不需要的<code>&lt;a&gt;</code>链接(<em>我们只要那四个匹配媒体网站</em>)造成了极大的性能开销。<br>为了解决这个问题，我们可以明确地在<code>&lt;a&gt;</code>标签内指定一个叫<code>.social-link</code>类作为关键字，但是跟我们想的不太一样，因为之前我们只知道不要在元素里添加一些无用的类，聊到这里，这就是比较有趣的地方了，其实这是一个奇怪的web标准的最佳实践和纯粹的速度之间的平衡。我们之前会有如下的页面排版：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul id=<span class="string">"social"</span>&gt;</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#"</span> <span class="attribute">class</span>=<span class="value">"twitter"</span>&gt;</span>Twitter<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#"</span> <span class="attribute">class</span>=<span class="value">"facebook"</span>&gt;</span>Facebook<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#"</span> <span class="attribute">class</span>=<span class="value">"dribble"</span>&gt;</span>Dribbble<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#"</span> <span class="attribute">class</span>=<span class="value">"gplus"</span>&gt;</span>Google+<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">ul</span>&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<p>和下面的css选择方式<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#social a &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是现在我们修改后的页面排版如下：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul id=<span class="string">"social"</span>&gt;</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#"</span> <span class="attribute">class</span>=<span class="value">"social-link twitter"</span>&gt;</span>Twitter<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#"</span> <span class="attribute">class</span>=<span class="value">"social-link facebook"</span>&gt;</span>Facebook<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#"</span> <span class="attribute">class</span>=<span class="value">"social-link dribble"</span>&gt;</span>Dribbble<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#"</span> <span class="attribute">class</span>=<span class="value">"social-link gplus"</span>&gt;</span>Google+<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">ul</span>&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<p>和下面修改后的css选择方式<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#social .social-link &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个新的关键字选择器将会查找和匹配更少量的元素，意味着浏览器可以更快的渲染它们以腾出时间来做后面的工作。其实我们可以直接用<code>.socaial-link</code>表示，并不需要在前面加上<code>#socail</code>限定符；接下来的部分会讲到……</p>
+<p>所以简单的讲，关键字选择器决定了浏览器要做多少工作，这就是我们值得注意的地方。</p>
+<h2 id="u9650_u5B9A_u7B26_u5D4C_u5957_u9009_u62E9_u5668_u8BBE_u8BA1"><a href="#u9650_u5B9A_u7B26_u5D4C_u5957_u9009_u62E9_u5668_u8BBE_u8BA1" class="headerlink" title="限定符嵌套选择器设计"></a>限定符嵌套选择器设计</h2><p>讲到这里，我们知道了什么是关键字选择器，这也是写代码需要多考虑的地方，但是我们还能做更深层次的进行优化。一个设计良好的关键字选择器是会尽量避免太多的限定符嵌套的。多限定符如下所表示：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#content a &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>会发生什么呢？<br>首先浏览器第一件事就是在页面上搜索所有的<code>&lt;a&gt;</code>标签，完了之后还会检查哪些<code>&lt;a&gt;</code>标签在id为<code>#content</code>内，一直找一直找，直到找到最顶层的<code>html</code>元素，这也就导致浏览器做了太多不必要的检查工作，我们可以举一个更现实的例子如下：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#nav li a &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>直接降级为如下形式：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#nav a &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们知道<code>a</code>在<code>li</code>内，它肯定也就在<code>#nav</code>内，所以我们可以直接把<code>li</code>从选择器里移除，又因为<code>id</code>为<code>nav</code>的元素在页面只存在一个，所以在此范围内其他元素是完全不相关的，因此我们也可以移除类似<code>ul</code>的元素。</p>
+<p>总结，所限定符选择器方式会增加浏览器工作的负担；通过删减一些没必要的元素，尽可能地把你的选择器设计的更简洁、更高效。</p>
+<h2 id="u771F_u7684_u8981_u8FD9_u6837_u505A_u5417_uFF1F"><a href="#u771F_u7684_u8981_u8FD9_u6837_u505A_u5417_uFF1F" class="headerlink" title="真的要这样做吗？"></a>真的要这样做吗？</h2><p>简短的回答是：可能不必！<br>完整的回答是：根据你搭建的网站的情况，如果你在开发下一代<strong>portfolio</strong>，就会更关注与代码的整洁而不是css的性能，因为你真的不可能注意到的。但是如果你在维护亚马逊<br>这样的网站，网站页面往往毫秒间就会有不同结果，那么你可能注意一下，但也可能你仍旧不会注意。</p>
+<p>浏览器会更好的处理css的解析速度；甚至是移动设备。你可能就不曾注意到网页中css选择器自身的性能问题，但是。。。</p>
+<h2 id="u4F46_u662F"><a href="#u4F46_u662F" class="headerlink" title="但是"></a>但是</h2><p>无论浏览器多快都会做这些工作，css的性能问题也仍旧会存在。即使你不需要，甚至不想理会文中的提到的任意一点，但这些知识都是值得你去了解的，请记住css选择器是非常耗性能的，应该避免冗长的嵌套，如果你发现自己写成类似如下的的语法：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">div:nth-<span class="keyword">of</span>-type(<span class="number">3</span>) ul:last-child li:nth-<span class="keyword">of</span>-type(odd) * &#123; font-weight:bold &#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么你可能就已经出错了！</p>
+<h6 id="u539F_u6587_u94FE_u63A5_Writing_efficient_CSS_selectors"><a href="#u539F_u6587_u94FE_u63A5_Writing_efficient_CSS_selectors" class="headerlink" title="原文链接  Writing efficient CSS selectors"></a>原文链接  <a href="http://csswizardry.com/2011/09/writing-efficient-css-selectors/" target="_blank" rel="external">Writing efficient CSS selectors</a></h6><p>================================================================<br><code>post by</code> <strong>午夜圣斗士</strong>    <a href="http://wpa.qq.com/msgrd?v=3&amp;uin=308261062&amp;site=qq&amp;menu=yes" target="_blank" rel="external">QQ</a> | <a href="mailto:jiangzx0526@gmail.com" target="_blank" rel="external">邮箱</a> | <a href="https://github.com/jiangzx" target="_blank" rel="external">Github</a></p>
+
+      
+    </div>
+    
+      <div class="article-toc">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CSS_u9009_u62E9_u5668"><span class="toc-number">1.</span> <span class="toc-text">CSS选择器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#u7EC4_u5408_u9009_u62E9_u5668_u8BBE_u8BA1"><span class="toc-number">2.</span> <span class="toc-text">组合选择器设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#u5173_u952E_u5B57_u9009_u62E9_u5668_u8BBE_u8BA1"><span class="toc-number">3.</span> <span class="toc-text">关键字选择器设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#u9650_u5B9A_u7B26_u5D4C_u5957_u9009_u62E9_u5668_u8BBE_u8BA1"><span class="toc-number">4.</span> <span class="toc-text">限定符嵌套选择器设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#u771F_u7684_u8981_u8FD9_u6837_u505A_u5417_uFF1F"><span class="toc-number">5.</span> <span class="toc-text">真的要这样做吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#u4F46_u662F"><span class="toc-number">6.</span> <span class="toc-text">但是</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#u539F_u6587_u94FE_u63A5_Writing_efficient_CSS_selectors"><span class="toc-number">6.0.0.0.1.</span> <span class="toc-text">原文链接  Writing efficient CSS selectors</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+      </div>
+    
+    
+      <footer class="article-footer">
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/translation/">translation</a></li></ul>
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/10/22/learning-node-middleware/" id="article-nav-newer" class="article-nav-link-wrap">
+      <div class="article-nav-title"><span>&lt;</span>&nbsp;
+        
+          Express4.x学习(一) - 中间件
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/10/03/idea-for-gradle-service/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">在ideaJ中调试gradle项目&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 jiangzx0526@gmail.com&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script src="/js/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+  </div>
+</body>
+</html>

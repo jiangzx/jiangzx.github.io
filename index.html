@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>午夜圣斗士</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="午夜圣斗士">
+<meta property="og:url" content="http://jiangzx.github.io/index.html">
+<meta property="og:site_name" content="午夜圣斗士">
+<meta property="og:description">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="午夜圣斗士">
+<meta name="twitter:description">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo logo-text" href="/">午夜圣斗士</a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">文档</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://jiangzx.github.io"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+    <section id="main" class="outer">
+      <article id="post-learning-node-middleware" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/10/22/learning-node-middleware/">Express4.x学习(一) - 中间件</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2014/10/22/learning-node-middleware/" class="article-date">
+  <time datetime="2014-10-22T03:27:40.000Z" itemprop="datePublished">2014-10-22</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Express框架本质上就是由一系列中间件在内部执行。所谓中间件就是一个能访问request/response/next对象的一个函数（这里的next对象其实也是一个中间件），而且每一个中间件都有能力改变request或者response对象,而next就是负责如何让这个请求响应周期向下流转，或者说停止流转的作用，由于中间件是串联执行的，所以中间件在代码中的顺序是非常重要的。假设当前的中间件正在处理您的请求但是不想终止该请求-响应周期，他就必须通过next对象把控制器交给下一个中间件去处理，否则这个请求将会被挂起！通过挂载点（请求的url路径），中间件可以配置在应用级别或者是路由级别，也可以将一连串多个中间件挂在同一个路径下。<br>
+        
+          <p class="article-more-link">
+            <a href="/2014/10/22/learning-node-middleware/#more">显示全文</a>
+          </p>
+        
+      
+    </div>
+    
+    
+      <footer class="article-footer">
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/node/">node</a></li></ul>
+
+      </footer>
+    
+  </div>
+  
+</article>
+
+
+    
+      <article id="post-read-css-performance-article" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/10/17/read-css-performance-article/">书写高效的CSS选择器</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2014/10/17/read-css-performance-article/" class="article-date">
+  <time datetime="2014-10-17T03:33:42.000Z" itemprop="datePublished">2014-10-17</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/译文/">译文</a>
+  </div>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>高性能CSS并不是一个新话题，也没有花太多时间研究，但自从入职<em>SKY</em>[<code>作者的工作单位</code>] 以来，我就更加关注CSS设计方便的性能问题。有很多人根本没有意识到CSS选择器的设计即有高效的一面同时也有低效的一面。当你意识到你在css选择器设计过程中，一些细微修改后能够使性能降低，那么以后也就很容易避免这些性能问题了。<br>
+        
+          <p class="article-more-link">
+            <a href="/2014/10/17/read-css-performance-article/#more">显示全文</a>
+          </p>
+        
+      
+    </div>
+    
+    
+      <footer class="article-footer">
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/translation/">translation</a></li></ul>
+
+      </footer>
+    
+  </div>
+  
+</article>
+
+
+    
+      <article id="post-idea-for-gradle-service" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/10/03/idea-for-gradle-service/">在ideaJ中调试gradle项目</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2014/10/03/idea-for-gradle-service/" class="article-date">
+  <time datetime="2014-10-03T02:06:49.000Z" itemprop="datePublished">2014-10-03</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java-tools/">java tools</a>
+  </div>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>准备的工具有<code>IdeaJ-V-12</code>(<strong>安装时默认集成了<code>gradle</code>，<code>maven</code>插件等</strong>)。并安装<code>Jrebel</code>插件(<strong>网上有破解版</strong>)，安装<code>Jrebel</code>是为了让web服务在运行时能够实现热部署，接下来就是如何配置了，请看截图<br>
+        
+          <p class="article-more-link">
+            <a href="/2014/10/03/idea-for-gradle-service/#more">显示全文</a>
+          </p>
+        
+      
+    </div>
+    
+    
+      <footer class="article-footer">
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+
+      </footer>
+    
+  </div>
+  
+</article>
+
+
+    </section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 jiangzx0526@gmail.com&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script src="/js/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+  </div>
+</body>
+</html>
